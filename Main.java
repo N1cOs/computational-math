@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 
 public class Main{
-    //testjnbhvgcfdk
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String inType = null;
