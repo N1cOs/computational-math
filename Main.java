@@ -17,7 +17,7 @@ public class Main{
         while(true) {
             try {
                 if(size <= 0) {
-                    System.out.println("Введите количество переменных:");
+                    System.out.println("Введите количество неизвестных:");
                     size = Integer.parseInt(scanner.nextLine());
                     if(size <= 0)
                         throw new Exception();

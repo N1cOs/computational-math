@@ -31,12 +31,13 @@ public class GaussMethod {
                 break;
             }
         }
-        for(int i = coefficients.length; i >= 0; i--){
-            coefficients[nonZero][i] = coefficients[nonZero][i] / coefficients[nonZero][numEquation];
-            double temp = coefficients[numEquation][i];
-            coefficients[numEquation][i] = coefficients[nonZero][i];
-            coefficients[nonZero][i] = temp;
+        for(int i = coefficients.length; i >= numEquation; i--){
+            coefficients[nonZero][i] /= coefficients[nonZero][numEquation];
         }
+
+        if(numEquation != nonZero)
+            swapLines(coefficients, nonZero, numEquation);
+
 
         for(int i = (numEquation + 1); i < coefficients.length; i++){
             for(int j = coefficients.length; j >=0; j--){
@@ -87,6 +88,14 @@ public class GaussMethod {
             residual[i] = coefficients[i][coefficients.length] - sum;
         }
         return residual;
+    }
+
+    private void swapLines(double[][] coefficients,int nonZero, int numEquation){
+        for(int i = coefficients.length; i >= numEquation; i--){
+            double temp = coefficients[numEquation][i];
+            coefficients[numEquation][i] = coefficients[nonZero][i];
+            coefficients[nonZero][i] = temp;
+        }
     }
 
 
