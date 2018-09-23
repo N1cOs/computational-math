@@ -43,7 +43,7 @@ public class Main{
                 }
                 GaussMethod method = new GaussMethod(matrix);
                 double[][] triangularMatrix = method.getTriangularMatrix();
-                System.out.println("Труегольная матрица:");
+                System.out.println("Треугольная матрица:");
                 for (double[] array : triangularMatrix)
                     System.out.println(Arrays.toString(array));
                 double[] result = method.getResult(triangularMatrix);
