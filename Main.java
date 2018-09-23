@@ -68,11 +68,12 @@ public class Main{
 
     private static double[][] getMatrix(InputStream inputStream, int size){
         double[][] matrix = new double[size][size + 1];
-        Scanner scanner = new Scanner(inputStream);
-        for (int i = 0; i < size; i++) {
-            String[] values = scanner.nextLine().trim().split("\\s+");
-            for (int j = 0; j <= size; j++)
-                matrix[i][j] = Double.parseDouble(values[j]);
+        try(Scanner scanner = new Scanner(inputStream)) {
+            for (int i = 0; i < size; i++) {
+                String[] values = scanner.nextLine().trim().split("\\s+");
+                for (int j = 0; j <= size; j++)
+                    matrix[i][j] = Double.parseDouble(values[j]);
+            }
         }
         return matrix;
     }
