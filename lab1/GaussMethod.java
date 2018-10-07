@@ -8,6 +8,10 @@ public class GaussMethod {
         this.coefficients = coefficients;
     }
 
+    /**
+     *
+     * @return {@link #forwardElimination(double[][])}
+     */
     public double[][] getTriangularMatrix() {
         return forwardElimination(copyCoefficients());
     }
@@ -21,9 +25,12 @@ public class GaussMethod {
     }
 
 
-
+    /**
+     *
+     * @param coefficients of the system of linear equations
+     * @return null if coefficients are invalid, otherwise return triangular matrix
+     */
     private double[][] forwardElimination(double[][] coefficients){
-        //Находим номер уравнения, в котором коэффициент при текущей неизвестной не равен 0
         int nonZero = 0;
         for(int i = numEquation; i < coefficients.length; i++){
             if(coefficients[i][numEquation] != 0){
@@ -32,6 +39,9 @@ public class GaussMethod {
             }
         }
         for(int i = coefficients.length; i >= numEquation; i--){
+            if(coefficients[nonZero][numEquation] == 0){
+                return null;
+            }
             coefficients[nonZero][i] /= coefficients[nonZero][numEquation];
         }
 
@@ -41,7 +51,7 @@ public class GaussMethod {
 
         for(int i = (numEquation + 1); i < coefficients.length; i++){
             for(int j = coefficients.length; j >=0; j--){
-                coefficients[i][j] = coefficients[i][j] - coefficients[i][numEquation] * coefficients[numEquation][j];
+                coefficients[i][j] -= coefficients[i][numEquation] * coefficients[numEquation][j];
             }
         }
         return ++numEquation < coefficients.length - 1 ? forwardElimination(coefficients) : coefficients;
@@ -97,6 +107,5 @@ public class GaussMethod {
             coefficients[nonZero][i] = temp;
         }
     }
-
 
 }
