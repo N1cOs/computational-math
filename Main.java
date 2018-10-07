@@ -8,17 +8,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String inType;
-        int size;
-        try {
+        try(Scanner scanner = new Scanner(System.in)) {
             System.out.println("Введите количество неизвестных:");
-            size = Integer.parseInt(scanner.nextLine());
+            int size = Integer.parseInt(scanner.nextLine());
             if (size <= 0)
                 throw new Exception();
             System.out.println("Введите file, если хотите считать данные из файла, или line" +
                     ", если хотите ввести данные через командную строку");
-            inType = scanner.nextLine();
+            String inType = scanner.nextLine();
             double[][] matrix;
             switch (inType) {
                 case "file":
