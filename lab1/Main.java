@@ -1,4 +1,4 @@
-import lab1.GaussMethod;
+package lab1;
 
 import java.io.*;
 import java.util.Arrays;
