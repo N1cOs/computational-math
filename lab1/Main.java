@@ -32,20 +32,25 @@ public class Main {
             GaussMethod method = new GaussMethod(matrix);
             double[][] triangularMatrix = method.getTriangularMatrix();
             if(triangularMatrix == null)
-                throw new Exception();
-            System.out.println("Треугольная матрица:");
-            for (double[] array : triangularMatrix)
-                System.out.println(Arrays.toString(array));
-            double[] result = method.getResult(triangularMatrix);
-            if (result != null) {
-                System.out.println("Результат: " + Arrays.toString(result));
-                System.out.println("Невязка: " + Arrays.toString(method.getResidual(result)));
-            } else
                 System.out.println("Система несовместна или имеет бесконечное количество решений");
+            else {
+                System.out.println("Треугольная матрица:");
+                for (double[] array : triangularMatrix)
+                    System.out.println(Arrays.toString(array));
+                double[] result = method.getResult(triangularMatrix);
+                if (result != null) {
+                    System.out.println("Результат: " + Arrays.toString(result));
+                    System.out.println("Невязка: " + Arrays.toString(method.getResidual(result)));
+                }
+                else
+                    System.out.println("Система несовместна или имеет бесконечное количество решений");
+            }
         } catch (FileNotFoundException e) {
             System.out.println("Введен некорректный путь к файлу\n");
         } catch (IOException e) {
             System.out.println("Введен некорректный способ ввода данных\n");
+        }catch (NumberFormatException e){
+            System.out.println("Коэффициенты должны быть числами!!!\n");
         } catch (Exception e) {
             System.out.println("Числа введены некорректно\n");
         }
