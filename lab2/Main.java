@@ -7,7 +7,26 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args){
         List<Function> functions = getFunctions();
-
+        try(Scanner scanner = new Scanner(System.in)){
+            System.out.println("Доступные функции:");
+            int index = 0;
+            for(Function function : functions)
+                System.out.println(++index + ": " + function.toString());
+            System.out.println("Введите номер функции, интеграл которой хотели бы вычислить:");
+            int number = Integer.parseInt(scanner.nextLine().trim());
+            System.out.println("Введите пределы интегрирования через пробел:");
+            String[] limits = scanner.nextLine().
+                    trim().replace(',', '.').split("\\s+");
+            System.out.println("Введите точность:");
+            double accuracy = Double.parseDouble(scanner.nextLine().replace(',', '.'));
+            IntegralCalculator calculator = new IntegralCalculator(functions.get(--number),
+                    Double.parseDouble(limits[0]), Double.parseDouble(limits[1]));
+            System.out.println("Значение интеграла: " + calculator.solve(accuracy));
+            System.out.println("Количество разбиений: " + calculator.getNumberOfIntervals());
+        }
+        catch (Exception e){
+            System.out.println("Введите данные корректно!!!");
+        }
     }
 
     private static List<Function> getFunctions(){
@@ -21,8 +40,7 @@ public class Main {
             public String toString() {
                 return "7 / (x^2 + 1)";
             }
-        };
-        Function function2 = new Function() {
+        };Function function2 = new Function() {
             @Override
             public double getValue(double arg) {
                 return 2 * arg * arg + arg + 4;

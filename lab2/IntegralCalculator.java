@@ -4,6 +4,7 @@ public class IntegralCalculator {
     private double upperLimit;
     private double lowerLimit;
     private double intervalLength;
+    private int numberOfIntervals;
     private Function function;
 
     public IntegralCalculator(Function function, double lowerLimit, double upperLimit){
@@ -43,6 +44,11 @@ public class IntegralCalculator {
             result = result2;
             result2 = trapezoidalRule(intervals*=2);
         }
+        numberOfIntervals = intervals;
         return result2;
+    }
+
+    public int getNumberOfIntervals() {
+        return numberOfIntervals;
     }
 }
