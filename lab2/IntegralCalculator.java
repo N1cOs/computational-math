@@ -1,7 +1,5 @@
 package lab2;
 
-import java.io.IOException;
-
 public class IntegralCalculator {
     private double upperLimit;
     private double lowerLimit;
@@ -25,7 +23,6 @@ public class IntegralCalculator {
             currentPiece += lengthOfPiece;
             sum += function.getValue(currentPiece);
         }
-
         double result = lengthOfPiece *
                 ((function.getValue(lowerLimit) + function.getValue(upperLimit)) / 2 + sum);
         if(Double.isFinite(result)){
