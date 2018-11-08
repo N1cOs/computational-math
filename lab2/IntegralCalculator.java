@@ -1,5 +1,7 @@
 package lab2;
 
+import java.io.IOException;
+
 public class IntegralCalculator {
     private double upperLimit;
     private double lowerLimit;
@@ -14,15 +16,6 @@ public class IntegralCalculator {
         this.function = function;
     }
 
-    public String solve(double accuracy){
-        double temp = accuracy;
-        int n = 1;
-        while((temp *= 10) < 1){
-            n++;
-        }
-        return String.format("%." + n + "f", integrate(accuracy));
-    }
-
 
     private double trapezoidalRule(int intervals){
         double lengthOfPiece = intervalLength / intervals;
@@ -32,11 +25,21 @@ public class IntegralCalculator {
             currentPiece += lengthOfPiece;
             sum += function.getValue(currentPiece);
         }
-        return lengthOfPiece *
+
+        double result = lengthOfPiece *
                 ((function.getValue(lowerLimit) + function.getValue(upperLimit)) / 2 + sum);
+        if(Double.isFinite(result)){
+            return result;
+        }
+        else{
+            throw new ArithmeticException();
+        }
     }
 
-    private double integrate(double accuracy){
+    public double integrate(double accuracy){
+        if(intervalLength == 0){
+            return 0;
+        }
         int intervals = 10;
         double result = trapezoidalRule(intervals);
         double result2 = trapezoidalRule(intervals*=2);

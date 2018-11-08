@@ -21,12 +21,29 @@ public class Main {
             double accuracy = Double.parseDouble(scanner.nextLine().replace(',', '.'));
             IntegralCalculator calculator = new IntegralCalculator(functions.get(--number),
                     Double.parseDouble(limits[0]), Double.parseDouble(limits[1]));
-            System.out.println("Значение интеграла: " + calculator.solve(accuracy));
+            double answer = calculator.integrate(accuracy);
+            if(answer == 0){
+                System.out.println("Длина выбраного интервала должна быть больше нуля");
+                return;
+            }
+            System.out.println("Значение интеграла: " + format(accuracy, answer));
             System.out.println("Количество разбиений: " + calculator.getNumberOfIntervals());
         }
-        catch (Exception e){
-            System.out.println("Введите данные корректно!!!");
+        catch (ArithmeticException e){
+            System.out.println("Некоторые значения из указанного промежутка не удовлетворяют ОДЗ функции");
         }
+        catch (Exception e){
+            System.out.println("Введите данные согласно инструкциям!!!");
+        }
+    }
+
+    private static String format(double accuracy, double result){
+        double temp = accuracy;
+        int n = 1;
+        while((temp *= 10) < 1){
+            n++;
+        }
+        return String.format("%." + n + "f", result);
     }
 
     private static List<Function> getFunctions(){
@@ -70,7 +87,7 @@ public class Main {
         };Function function5 = new Function() {
             @Override
             public double getValue(double arg) {
-                return 3 / arg + 1;
+                return 3 / (arg + 1);
             }
             @Override
             public String toString() {
