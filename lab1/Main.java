@@ -16,7 +16,7 @@ public class Main {
             System.out.println("Введите file, если хотите считать данные из файла, или line" +
                     ", если хотите ввести данные через командную строку");
             String inType = scanner.nextLine();
-            double[][] matrix;
+            double[][] matrix = generateMatrix(4);
             switch (inType) {
                 case "file":
                     System.out.println("Введите путь к файлу:");
@@ -29,6 +29,7 @@ public class Main {
                 default:
                     throw new IOException();
             }
+            matrix = generateMatrix(4);
             GaussMethod method = new GaussMethod(matrix);
             double[][] triangularMatrix = method.getTriangularMatrix();
             if(triangularMatrix == null)
@@ -62,13 +63,13 @@ public class Main {
             for (int i = 0; i < size; i++) {
                 String[] values = scanner.nextLine().trim().split("\\s+");
                 for (int j = 0; j <= size; j++)
-                    matrix[i][j] = Double.parseDouble(values[j]);
+                    matrix[i][j] = Double.parseDouble(values[j].replace(',', '.'));
             }
         }
         return matrix;
     }
 
-    private static double[][] generateMatrix(int n) {
+    public static double[][] generateMatrix(int n) {
         double[][] matrix = new double[n][n + 1];
         Random random = new Random();
         for (int i = 0; i < n; i++) {
