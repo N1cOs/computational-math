@@ -16,7 +16,7 @@ public class Main {
             System.out.println("Введите file, если хотите считать данные из файла, или line" +
                     ", если хотите ввести данные через командную строку");
             String inType = scanner.nextLine();
-            double[][] matrix = generateMatrix(4);
+            double[][] matrix;
             switch (inType) {
                 case "file":
                     System.out.println("Введите путь к файлу:");
@@ -29,7 +29,6 @@ public class Main {
                 default:
                     throw new IOException();
             }
-            matrix = generateMatrix(4);
             GaussMethod method = new GaussMethod(matrix);
             double[][] triangularMatrix = method.getTriangularMatrix();
             if(triangularMatrix == null)

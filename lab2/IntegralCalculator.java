@@ -5,6 +5,7 @@ public class IntegralCalculator {
     private double lowerLimit;
     private double intervalLength;
     private int numberOfIntervals;
+    private double runge;
     private Function function;
 
     public IntegralCalculator(Function function, double lowerLimit, double upperLimit){
@@ -23,25 +24,24 @@ public class IntegralCalculator {
             currentPiece += lengthOfPiece;
             sum += function.getValue(currentPiece);
         }
-        double result = lengthOfPiece *
+        double result= lengthOfPiece *
                 ((function.getValue(lowerLimit) + function.getValue(upperLimit)) / 2 + sum);
         if(Double.isFinite(result)){
             return result;
         }
         else{
-            throw new ArithmeticException();
+            throw new ArithmeticException(
+                    "Некоторые значения из указанного промежутка " +
+                    "не удовлетворяют ОДЗ функции");
         }
     }
 
     public double integrate(double accuracy){
-        if(intervalLength == 0){
-            return 0;
-        }
         int intervals = 10;
-        double result = trapezoidalRule(intervals);
+        double result1= trapezoidalRule(intervals);
         double result2 = trapezoidalRule(intervals*=2);
-        while(Math.abs(result2 - result) / 3 > accuracy){
-            result = result2;
+        while((runge = Math.abs(result2 - result1) / 3) > accuracy){
+            result1= result2;
             result2 = trapezoidalRule(intervals*=2);
         }
         numberOfIntervals = intervals;
@@ -50,5 +50,9 @@ public class IntegralCalculator {
 
     public int getNumberOfIntervals() {
         return numberOfIntervals;
+    }
+
+    public double getRunge() {
+        return runge;
     }
 }

@@ -14,23 +14,34 @@ public class Main {
                 System.out.println(++index + ": " + function.toString());
             System.out.println("Введите номер функции, интеграл которой хотели бы вычислить:");
             int number = Integer.parseInt(scanner.nextLine().trim());
+            if(number > functions.size() || number < 1)
+                throw new ArithmeticException("Выберите номер функции из списка");
+
             System.out.println("Введите пределы интегрирования через пробел:");
             String[] limits = scanner.nextLine().
                     trim().replace(',', '.').split("\\s+");
-            System.out.println("Введите точность:");
+            if(limits.length > 2)
+                throw new ArithmeticException("Введите только пределы интегрирования (два числа)");
+
+            double lowerLimit = Double.parseDouble(limits[0]);
+            double upperLimit = Double.parseDouble(limits[1]);
+            if(lowerLimit == upperLimit)
+                throw new ArithmeticException("Длина выбраного интервала должна быть больше нуля");
+
+            System.out.println("Введите точность (например, 0.001):");
             double accuracy = Double.parseDouble(scanner.nextLine().replace(',', '.'));
-            IntegralCalculator calculator = new IntegralCalculator(functions.get(--number),
-                    Double.parseDouble(limits[0]), Double.parseDouble(limits[1]));
+            if(accuracy <= 0 || accuracy >= 1)
+                throw new ArithmeticException("Точность должна быть больше 0 и меньше 1");
+
+            IntegralCalculator calculator = new IntegralCalculator(functions.get(--number), lowerLimit, upperLimit);
             double answer = calculator.integrate(accuracy);
-            if(answer == 0){
-                System.out.println("Длина выбраного интервала должна быть больше нуля");
-                return;
-            }
             System.out.println("Значение интеграла: " + format(accuracy, answer));
             System.out.println("Количество разбиений: " + calculator.getNumberOfIntervals());
+            System.out.println("Полученная погрешность: " + calculator.getRunge());
         }
+
         catch (ArithmeticException e){
-            System.out.println("Некоторые значения из указанного промежутка не удовлетворяют ОДЗ функции");
+            System.out.println(e.getMessage());
         }
         catch (Exception e){
             System.out.println("Введите данные согласно инструкциям!!!");
