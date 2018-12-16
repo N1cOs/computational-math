@@ -23,13 +23,11 @@ public class NewtonPolynomial {
         if (args.length == 2) {
             forwardX = args;
             backwardX = null;
-        }
-        else {
+        } else {
             if (args.length % 2 == 0) {
                 forwardX = new double[separate + 1];
                 backwardX = new double[args.length - separate];
-            }
-            else {
+            } else {
                 forwardX = new double[separate + 1];
                 backwardX = new double[separate + 1];
             }
@@ -40,14 +38,14 @@ public class NewtonPolynomial {
 
         List<Function> functions = new LinkedList<>();
         double h = args[1] - args[0];
-        functions.add(interpolate(forwardX, h, true));
+        functions.add(interpolateConstH(forwardX, h, true));
         if (backwardX != null)
-            functions.add(interpolate(backwardX, h, false));
+            functions.add(interpolateConstH(backwardX, h, false));
 
         return functions;
     }
 
-    private Function interpolate(double[] args, double h, boolean isForward) {
+    private Function interpolateConstH(double[] args, double h, boolean isForward) {
         double[] values = new double[args.length];
         for (int i = 0; i < values.length; i++)
             values[i] = baseFunction.getValue(args[i]);
@@ -90,4 +88,33 @@ public class NewtonPolynomial {
         }
         return result;
     }
+
+    public Function interpolate(double[] args) {
+        double[] coeffs = new double[args.length - 1];
+        for (int i = 0; i < coeffs.length; i++)
+            coeffs[i] = divideSubtractions(args, 0, i + 1);
+        Function function = (arg) -> {
+            double result = 0;
+            for (int i = 0; i < coeffs.length; i++) {
+                double temp = coeffs[i] * (arg - args[0]);
+                for (int j = 1; j <= i; j++) {
+                    temp *= (arg - args[j]);
+                }
+                result += temp;
+            }
+            result += baseFunction.getValue(args[0]);
+            return result;
+        };
+        return function;
+    }
+
+    private double divideSubtractions(double[] args, int startPosition, int endPosition) {
+        if (endPosition - startPosition == 1) {
+            return (baseFunction.getValue(args[endPosition]) - baseFunction.getValue(args[startPosition])) /
+                    (args[endPosition] - args[startPosition]);
+        }
+        return (divideSubtractions(args, startPosition + 1, endPosition) -
+                divideSubtractions(args, startPosition, endPosition - 1)) / (args[endPosition] - args[startPosition]);
+    }
+
 }
