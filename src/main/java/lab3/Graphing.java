@@ -8,6 +8,7 @@ import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import javax.swing.*;
+import java.awt.*;
 
 @AllArgsConstructor
 public class Graphing {
@@ -20,6 +21,14 @@ public class Graphing {
         XYChart chart = new XYChart(width, height);
         chart.getStyler().setXAxisMin(xData[0]);
         chart.getStyler().setXAxisMax(xData[xData.length - 1]);
+
+        double[] yData = new double[xData.length];
+        for(int i = 0; i < yData.length; i++)
+            yData[i] = baseFunction.getValue(xData[i]);
+        XYSeries points = chart.addSeries("Points", xData, yData);
+        points.setMarker(SeriesMarkers.CIRCLE);
+        points.setMarkerColor(Color.RED);
+        points.setLineColor(Color.WHITE);
 
         double step = Math.abs(xData[xData.length - 1] - xData[0]) / width;
         double[] xGraphing = new double[width];
@@ -37,9 +46,6 @@ public class Graphing {
         chart.addSeries("Интерполированная функции", xGraphing, yPolynomial).
                 setMarker(SeriesMarkers.NONE);
 
-        double[] yData = new double[xData.length];
-        for(int i = 0; i < yData.length; i++)
-            yData[i] = baseFunction.getValue(xData[i]);
         return new XChartPanel<>(chart);
     }
 }
