@@ -89,27 +89,17 @@ public class Main {
         };Function function4 = new Function() {
             @Override
             public double getValue(double arg) {
-                return Math.pow(Math.E, 2 * arg);
+                return Math.pow(2, arg);
             }
             @Override
             public String toString() {
-                return "e^(2x)";
-            }
-        };Function function5 = new Function() {
-            @Override
-            public double getValue(double arg) {
-                return 3 / (arg + 1);
-            }
-            @Override
-            public String toString() {
-                return "3 / (x + 1)";
+                return "2^x";
             }
         };
         functions.add(function1);
         functions.add(function2);
         functions.add(function3);
         functions.add(function4);
-        functions.add(function5);
         return functions;
     }
 }

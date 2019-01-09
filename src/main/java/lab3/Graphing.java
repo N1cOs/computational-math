@@ -13,13 +13,11 @@ import java.awt.*;
 @AllArgsConstructor
 public class Graphing {
     private Function baseFunction;
+    private Function function;
     private double[] xData;
 
 
     public JPanel getChart(int width, int height) {
-        NewtonPolynomial polynomial = new NewtonPolynomial(baseFunction);
-        Function function = polynomial.interpolate(xData);
-
         XYChart chart = new XYChart(width, height);
         chart.getStyler().setXAxisMin(xData[0]);
         chart.getStyler().setXAxisMax(xData[xData.length - 1]);

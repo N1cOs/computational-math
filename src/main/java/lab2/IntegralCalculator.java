@@ -41,6 +41,9 @@ public class IntegralCalculator {
         double result1= trapezoidalRule(intervals);
         double result2 = trapezoidalRule(intervals*=2);
         while((runge = Math.abs(result2 - result1) / 3) > accuracy){
+            if(intervals * 2 >= 10_000_000){
+                throw new ArithmeticException("Достигнут максимум разбиений");
+            }
             result1= result2;
             result2 = trapezoidalRule(intervals*=2);
         }

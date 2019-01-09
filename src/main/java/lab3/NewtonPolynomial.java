@@ -13,6 +13,36 @@ public class NewtonPolynomial {
         this.baseFunction = baseFunction;
     }
 
+    public Function interpolate(double[] args) {
+        double[] coeffs = new double[args.length - 1];
+        for (int i = 0; i < coeffs.length; i++)
+            coeffs[i] = divideSubtractions(args, 0, i + 1);
+        Function function = (arg) -> {
+            double result = 0;
+            for (int i = 0; i < coeffs.length; i++) {
+                double temp = coeffs[i] * (arg - args[0]);
+                for (int j = 1; j <= i; j++) {
+                    temp *= (arg - args[j]);
+                }
+                result += temp;
+            }
+            result += baseFunction.getValue(args[0]);
+            return result;
+        };
+        return function;
+    }
+
+    private double divideSubtractions(double[] args, int startPosition, int endPosition) {
+        if (endPosition - startPosition == 1) {
+            return (baseFunction.getValue(args[endPosition]) - baseFunction.getValue(args[startPosition])) /
+                    (args[endPosition] - args[startPosition]);
+        }
+        return (divideSubtractions(args, startPosition + 1, endPosition) -
+                divideSubtractions(args, startPosition, endPosition - 1)) / (args[endPosition] - args[startPosition]);
+    }
+
+    //------------------------------------------------Unnecessary part------------------------------------------------
+
     public List<Function> getPolynomial(double[] args) {
         if (args.length < 1)
             throw new IllegalArgumentException("Args's length should be greater than 1");
@@ -87,34 +117,6 @@ public class NewtonPolynomial {
             result += temp;
         }
         return result;
-    }
-
-    public Function interpolate(double[] args) {
-        double[] coeffs = new double[args.length - 1];
-        for (int i = 0; i < coeffs.length; i++)
-            coeffs[i] = divideSubtractions(args, 0, i + 1);
-        Function function = (arg) -> {
-            double result = 0;
-            for (int i = 0; i < coeffs.length; i++) {
-                double temp = coeffs[i] * (arg - args[0]);
-                for (int j = 1; j <= i; j++) {
-                    temp *= (arg - args[j]);
-                }
-                result += temp;
-            }
-            result += baseFunction.getValue(args[0]);
-            return result;
-        };
-        return function;
-    }
-
-    private double divideSubtractions(double[] args, int startPosition, int endPosition) {
-        if (endPosition - startPosition == 1) {
-            return (baseFunction.getValue(args[endPosition]) - baseFunction.getValue(args[startPosition])) /
-                    (args[endPosition] - args[startPosition]);
-        }
-        return (divideSubtractions(args, startPosition + 1, endPosition) -
-                divideSubtractions(args, startPosition, endPosition - 1)) / (args[endPosition] - args[startPosition]);
     }
 
 }
