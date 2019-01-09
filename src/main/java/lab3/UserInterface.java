@@ -17,7 +17,7 @@ public class UserInterface {
 
     private JPanel graphicPanel;
 
-    private double[] xData = {1, 2, 3, 4};
+    private double[] xData;
 
 
     public UserInterface(Function baseFunction) {
@@ -29,13 +29,15 @@ public class UserInterface {
         final int xAmount = 5;
         final int graphicHeight = height * 7 / 10;
 
-        JFrame jFrame = new JFrame("Lab 4");
+        JFrame jFrame = new JFrame("Lab 3");
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setSize(width, height);
         JPanel mainPanel = new JPanel(null);
         jFrame.setContentPane(mainPanel);
 
-        graphicPanel = getGraphicPanel(width, graphicHeight);
+        graphicPanel = new JPanel();
+        graphicPanel.setLocation(0, 0);
+        graphicPanel.setSize(width, graphicHeight);
         mainPanel.add(graphicPanel);
 
         JPanel controlPanel = new JPanel(new GridLayout(5, 1));
@@ -56,7 +58,7 @@ public class UserInterface {
         AtomicReference<JPanel> argsPanel = new AtomicReference<>(generateButtons(4));
         controlPanel.add(argsPanel.get());
 
-        selectedXAmount.addActionListener(e ->{
+        selectedXAmount.addActionListener(e -> {
             //ToDo:repaint args panel
         });
 
@@ -72,10 +74,31 @@ public class UserInterface {
         JButton mainButton = new JButton("Интерполировать");
         mainButton.addActionListener(e -> {
             //ToDo:try to find easier approach to update graphics
-            mainPanel.remove(graphicPanel);
-            graphicPanel = getGraphicPanel(width, graphicHeight);
-            mainPanel.add(graphicPanel);
-            mainPanel.updateUI();
+            for (int i = 0; i < xAmount - 1; i++) {
+                if (((JTextField) argsPanel.get().getComponent(i)).getText().equals("")) {
+                    //ToDo: print error message
+                    System.out.println("error!");
+                    return;
+                }
+            }
+
+            double changeX;
+            try {
+                changeX = Double.parseDouble(changeField.getText());
+            } catch (NumberFormatException e1) {
+                System.out.println("error");
+                return;
+                //ToDo: print error message
+            }
+            if (changeX < xData[0] || changeX > xData[xData.length - 1]) {
+                System.out.println("error interval");
+                //ToDo: check if changeField contains in the interval from xData[0] to xData[last]
+            } else {
+                mainPanel.remove(graphicPanel);
+                graphicPanel = getGraphicPanel(width, graphicHeight, Double.parseDouble(changeField.getText()));
+                mainPanel.add(graphicPanel);
+                mainPanel.updateUI();
+            }
         });
         controlPanel.add(mainButton);
 
@@ -95,15 +118,21 @@ public class UserInterface {
         findValuePanel.add(valueLabel);
         findValuePanel.add(findValueButton);
         findValueButton.addActionListener(e -> {
-            double value = interpolateFunction.getValue(Double.parseDouble(findValueField.getText()));
-            valueLabel.setText(String.format("f(%s)=%.3f", findValueField.getText(), value));
+            if (interpolateFunction == null)
+                //ToDo: print error message
+                System.out.println("error!");
+            else {
+                double value = interpolateFunction.getValue(Double.parseDouble(findValueField.getText()));
+                valueLabel.setText(String.format("f(%s)=%.3f", findValueField.getText(), value));
+            }
         });
 
         return jFrame;
     }
-    
-    private JPanel generateButtons(int argsAmount){
+
+    private JPanel generateButtons(int argsAmount) {
         JPanel argsPanel = new JPanel(new GridLayout(1, argsAmount));
+        xData = new double[argsAmount];
         for (int i = 0; i < argsAmount; i++) {
             int index = i;
             JTextField xValue = new JTextField();
@@ -123,13 +152,15 @@ public class UserInterface {
         return argsPanel;
     }
 
-    private JPanel getGraphicPanel(int width, int height) {
-        NewtonPolynomial newtonPolynomial = new NewtonPolynomial(baseFunction);
+    private JPanel getGraphicPanel(int width, int height, double changeX) {
+        Function proxy = arg -> Double.compare(arg, changeX) == 0 ?
+                baseFunction.getValue(arg) * Main.CHANGE : baseFunction.getValue(arg);
+        NewtonPolynomial newtonPolynomial = new NewtonPolynomial(proxy);
         Arrays.sort(xData);
         Function interpolateFunction = newtonPolynomial.interpolate(xData);
         this.interpolateFunction = interpolateFunction;
-        JPanel graphicPanel =  new Graphing(baseFunction, interpolateFunction, xData).
-                getChart(width, height);
+        JPanel graphicPanel = new Graphing(baseFunction, interpolateFunction, xData).
+                getChart(width, height, changeX, proxy.getValue(changeX));
         graphicPanel.setLocation(0, 0);
         graphicPanel.setSize(width, height);
         return graphicPanel;

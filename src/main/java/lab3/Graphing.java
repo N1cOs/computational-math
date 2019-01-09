@@ -17,7 +17,7 @@ public class Graphing {
     private double[] xData;
 
 
-    public JPanel getChart(int width, int height) {
+    public JPanel getChart(int width, int height, double changeX, double changeY) {
         XYChart chart = new XYChart(width, height);
         chart.getStyler().setXAxisMin(xData[0]);
         chart.getStyler().setXAxisMax(xData[xData.length - 1]);
@@ -29,6 +29,13 @@ public class Graphing {
         points.setMarker(SeriesMarkers.CIRCLE);
         points.setMarkerColor(Color.RED);
         points.setLineColor(Color.WHITE);
+
+        XYSeries changeSeries = chart.addSeries("Измененное значение",
+                new double[]{changeX}, new double[]{changeY});
+        changeSeries.setMarker(SeriesMarkers.CIRCLE);
+        changeSeries.setLineColor(Color.WHITE);
+        changeSeries.setMarkerColor(Color.BLUE);
+
 
         double step = Math.abs(xData[xData.length - 1] - xData[0]) / width;
         double[] xGraphing = new double[width];
