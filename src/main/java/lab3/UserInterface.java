@@ -90,7 +90,7 @@ public class UserInterface {
 
             double changeX;
             try {
-                changeX = Double.parseDouble(changeField.getText());
+                changeX = Double.parseDouble(changeField.getText().replace(',', '.'));
             } catch (NumberFormatException e1) {
                 JOptionPane.showMessageDialog(jFrame, "Выберите узел, в котором нужно подменить значение функции",
                         errorTitle, JOptionPane.ERROR_MESSAGE);
@@ -131,7 +131,8 @@ public class UserInterface {
                         errorTitle, JOptionPane.ERROR_MESSAGE);
             else {
                 try {
-                    double value = interpolateFunction.getValue(Double.parseDouble(findValueField.getText()));
+                    double value = interpolateFunction.getValue(
+                            Double.parseDouble(findValueField.getText().replace(',', '.')));
                     valueLabel.setText(String.format("f(%s)=%.3f", findValueField.getText(), value));
                 } catch (NumberFormatException e1) {
                     JOptionPane.showMessageDialog(jFrame, "Значения Х должно быть числом",
@@ -154,7 +155,7 @@ public class UserInterface {
                 public void focusLost(FocusEvent e) {
                     try {
                         if (!xValue.getText().equals(""))
-                            xData[index] = Double.parseDouble(xValue.getText());
+                            xData[index] = Double.parseDouble(xValue.getText().replace(',', '.'));
                     } catch (NumberFormatException e1) {
                         JOptionPane.showMessageDialog(mainFrame, "Значения Х должны быть числами",
                                 "Ошибка", JOptionPane.WARNING_MESSAGE);
@@ -163,11 +164,13 @@ public class UserInterface {
             });
             xValue.addKeyListener(new KeyAdapter() {
                 @Override
-                public void keyPressed(KeyEvent e) {
+                public void keyReleased(KeyEvent e) {
                     int keyCode = e.getKeyCode();
-                    if(keyCode == KeyEvent.VK_LEFT && index != 0)
+                    int caretPosition = xValue.getCaretPosition();
+                    if (keyCode == KeyEvent.VK_LEFT && index != 0 && caretPosition == 0)
                         argsPanel.getComponent(index - 1).requestFocus();
-                    else if(keyCode == KeyEvent.VK_RIGHT && index != argsAmount - 1)
+                    else if (keyCode == KeyEvent.VK_RIGHT && index != argsAmount - 1
+                            && caretPosition == xValue.getText().length())
                         argsPanel.getComponent(index + 1).requestFocus();
                 }
             });
