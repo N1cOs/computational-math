@@ -28,6 +28,7 @@ public class UserInterface {
         final int firstXValue = 4;
         final int xAmount = 5;
         final int graphicHeight = height * 7 / 10;
+        final String errorTitle = "Ошибка";
 
         JFrame jFrame = new JFrame("Lab 3");
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -55,11 +56,15 @@ public class UserInterface {
             selectedXAmount.addItem(i);
         selectPanel.add(selectedXAmount);
 
-        AtomicReference<JPanel> argsPanel = new AtomicReference<>(generateButtons(4));
+        AtomicReference<JPanel> argsPanel = new AtomicReference<>(generateButtons(4, jFrame));
         controlPanel.add(argsPanel.get());
 
         selectedXAmount.addActionListener(e -> {
-            //ToDo:repaint args panel
+            controlPanel.remove(argsPanel.get());
+            argsPanel.set(generateButtons(selectedXAmount.getSelectedIndex() + firstXValue, jFrame));
+            controlPanel.add(argsPanel.get(), 1);
+            controlPanel.revalidate();
+            controlPanel.repaint();
         });
 
         JPanel changePanel = new JPanel();
@@ -73,11 +78,10 @@ public class UserInterface {
 
         JButton mainButton = new JButton("Интерполировать");
         mainButton.addActionListener(e -> {
-            //ToDo:try to find easier approach to update graphics
             for (int i = 0; i < xAmount - 1; i++) {
                 if (((JTextField) argsPanel.get().getComponent(i)).getText().equals("")) {
-                    //ToDo: print error message
-                    System.out.println("error!");
+                    JOptionPane.showMessageDialog(jFrame, "Заполните все значения Х",
+                            errorTitle, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -86,18 +90,20 @@ public class UserInterface {
             try {
                 changeX = Double.parseDouble(changeField.getText());
             } catch (NumberFormatException e1) {
-                System.out.println("error");
+                JOptionPane.showMessageDialog(jFrame, "Выберите узел, в котором нужно подменить значение функции",
+                        errorTitle, JOptionPane.ERROR_MESSAGE);
                 return;
-                //ToDo: print error message
             }
-            if (changeX < xData[0] || changeX > xData[xData.length - 1]) {
-                System.out.println("error interval");
-                //ToDo: check if changeField contains in the interval from xData[0] to xData[last]
+
+            if (Arrays.stream(xData).noneMatch(n -> Double.compare(n, changeX) == 0)) {
+                JOptionPane.showMessageDialog(jFrame, "Точка, в которой нужно подменить " +
+                        "значение функции должна быть узлом интерполяции", errorTitle, JOptionPane.ERROR_MESSAGE);
             } else {
                 mainPanel.remove(graphicPanel);
-                graphicPanel = getGraphicPanel(width, graphicHeight, Double.parseDouble(changeField.getText()));
+                graphicPanel = getGraphicPanel(width, graphicHeight, changeX);
                 mainPanel.add(graphicPanel);
-                mainPanel.updateUI();
+                mainPanel.revalidate();
+                mainPanel.repaint();
             }
         });
         controlPanel.add(mainButton);
@@ -119,18 +125,23 @@ public class UserInterface {
         findValuePanel.add(findValueButton);
         findValueButton.addActionListener(e -> {
             if (interpolateFunction == null)
-                //ToDo: print error message
-                System.out.println("error!");
+                JOptionPane.showMessageDialog(jFrame, "Сначала интерполируйте функцию",
+                        errorTitle, JOptionPane.ERROR_MESSAGE);
             else {
-                double value = interpolateFunction.getValue(Double.parseDouble(findValueField.getText()));
-                valueLabel.setText(String.format("f(%s)=%.3f", findValueField.getText(), value));
+                try {
+                    double value = interpolateFunction.getValue(Double.parseDouble(findValueField.getText()));
+                    valueLabel.setText(String.format("f(%s)=%.3f", findValueField.getText(), value));
+                } catch (NumberFormatException e1) {
+                    JOptionPane.showMessageDialog(jFrame, "Значения Х должно быть числом",
+                            errorTitle, JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
         return jFrame;
     }
 
-    private JPanel generateButtons(int argsAmount) {
+    private JPanel generateButtons(int argsAmount, JFrame mainFrame) {
         JPanel argsPanel = new JPanel(new GridLayout(1, argsAmount));
         xData = new double[argsAmount];
         for (int i = 0; i < argsAmount; i++) {
@@ -143,7 +154,8 @@ public class UserInterface {
                         if (!xValue.getText().equals(""))
                             xData[index] = Double.parseDouble(xValue.getText());
                     } catch (NumberFormatException e1) {
-                        //ToDo:print error message
+                        JOptionPane.showMessageDialog(mainFrame, "Значения Х должны быть числами",
+                                "Ошибка", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             });
