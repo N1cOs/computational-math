@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -157,6 +159,16 @@ public class UserInterface {
                         JOptionPane.showMessageDialog(mainFrame, "Значения Х должны быть числами",
                                 "Ошибка", JOptionPane.WARNING_MESSAGE);
                     }
+                }
+            });
+            xValue.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int keyCode = e.getKeyCode();
+                    if(keyCode == KeyEvent.VK_LEFT && index != 0)
+                        argsPanel.getComponent(index - 1).requestFocus();
+                    else if(keyCode == KeyEvent.VK_RIGHT && index != argsAmount - 1)
+                        argsPanel.getComponent(index + 1).requestFocus();
                 }
             });
             argsPanel.add(xValue);
