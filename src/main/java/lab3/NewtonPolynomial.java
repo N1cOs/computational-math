@@ -1,6 +1,7 @@
 package lab3;
 
 import lab2.Function;
+import lab4.FunctionAdapter;
 
 public class NewtonPolynomial {
     
@@ -8,17 +9,25 @@ public class NewtonPolynomial {
         double[] coeffs = new double[xData.length - 1];
         for (int i = 0; i < coeffs.length; i++)
             coeffs[i] = divideSubtractions(xData, yData, 0, i + 1);
-        Function function = (arg) -> {
-            double result = 0;
-            for (int i = 0; i < coeffs.length; i++) {
-                double temp = coeffs[i] * (arg - xData[0]);
-                for (int j = 1; j <= i; j++) {
-                    temp *= (arg - xData[j]);
+        Function function = new FunctionAdapter() {
+            @Override
+            public double getValue(double arg) {
+                double result = 0;
+                for (int i = 0; i < coeffs.length; i++) {
+                    double temp = coeffs[i] * (arg - xData[0]);
+                    for (int j = 1; j <= i; j++) {
+                        temp *= (arg - xData[j]);
+                    }
+                    result += temp;
                 }
-                result += temp;
+                result += yData[0];
+                return result;
             }
-            result += yData[0];
-            return result;
+
+            @Override
+            public double getValue(double x, double y) {
+                return super.getValue(x, y);
+            }
         };
         return function;
     }

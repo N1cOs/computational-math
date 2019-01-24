@@ -1,5 +1,7 @@
 package lab2;
 
+import lab4.FunctionAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -59,7 +61,7 @@ public class Main {
 
     private static List<Function> getFunctions(){
         List<Function> functions = new ArrayList<>();
-        Function function1 = new Function() {
+        Function function1 = new FunctionAdapter() {
             @Override
             public double getValue(double arg) {
                 return 7 / (arg * arg + 1);
@@ -68,7 +70,7 @@ public class Main {
             public String toString() {
                 return "7 / (x^2 + 1)";
             }
-        };Function function2 = new Function() {
+        };Function function2 = new FunctionAdapter() {
             @Override
             public double getValue(double arg) {
                 return 2 * arg * arg + arg + 4;
@@ -77,7 +79,7 @@ public class Main {
             public String toString() {
                 return "2x^2 + x + 4";
             }
-        };Function function3 = new Function() {
+        };Function function3 = new FunctionAdapter() {
             @Override
             public double getValue(double arg) {
                 return arg / Math.sqrt(Math.pow(arg, 4) + 16);
@@ -86,7 +88,7 @@ public class Main {
             public String toString() {
                 return "x / (x^4 + 16)^1/2";
             }
-        };Function function4 = new Function() {
+        };Function function4 = new FunctionAdapter() {
             @Override
             public double getValue(double arg) {
                 return Math.pow(2, arg);
