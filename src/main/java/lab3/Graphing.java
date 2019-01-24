@@ -25,7 +25,7 @@ public class Graphing {
         double[] yData = new double[xData.length];
         for (int i = 0; i < yData.length; i++)
             yData[i] = baseFunction.getValue(xData[i]);
-        XYSeries points = chart.addSeries("Points", xData, yData);
+        XYSeries points = chart.addSeries("Узлы", xData, yData);
         points.setMarker(SeriesMarkers.CIRCLE);
         points.setMarkerColor(Color.RED);
         points.setLineColor(Color.WHITE);
@@ -48,7 +48,7 @@ public class Graphing {
             xGraphing[i] = arg;
         }
 
-        chart.addSeries("Исходная функция", xGraphing, yBaseFunction).setMarker(SeriesMarkers.NONE);
+        chart.addSeries("Исходная функция e^x", xGraphing, yBaseFunction).setMarker(SeriesMarkers.NONE);
         chart.addSeries("Интерполированная функции", xGraphing, yPolynomial).
                 setMarker(SeriesMarkers.NONE);
 

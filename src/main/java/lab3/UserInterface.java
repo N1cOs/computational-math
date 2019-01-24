@@ -100,7 +100,8 @@ public class UserInterface {
             if (Arrays.stream(xData).noneMatch(n -> Double.compare(n, changeX) == 0)) {
                 JOptionPane.showMessageDialog(jFrame, "Точка, в которой нужно подменить " +
                         "значение функции должна быть узлом интерполяции", errorTitle, JOptionPane.ERROR_MESSAGE);
-            } else {
+            }
+            else {
                 mainPanel.remove(graphicPanel);
                 graphicPanel = getGraphicPanel(width, graphicHeight, changeX);
                 mainPanel.add(graphicPanel);
@@ -154,10 +155,19 @@ public class UserInterface {
                 @Override
                 public void focusLost(FocusEvent e) {
                     try {
-                        if (!xValue.getText().equals(""))
+                        if (!xValue.getText().equals("")) {
                             xData[index] = Double.parseDouble(xValue.getText().replace(',', '.'));
+                            if(Double.isInfinite(baseFunction.getValue(xData[index]))){
+                                xData[index] = 0;
+                                throw new IllegalArgumentException();
+                            }
+                        }
                     } catch (NumberFormatException e1) {
                         JOptionPane.showMessageDialog(mainFrame, "Значения Х должны быть числами",
+                                "Ошибка", JOptionPane.WARNING_MESSAGE);
+                    }
+                    catch (IllegalArgumentException e1){
+                        JOptionPane.showMessageDialog(mainFrame, "Значение Х выходит за допустимые пределы",
                                 "Ошибка", JOptionPane.WARNING_MESSAGE);
                     }
                 }
@@ -180,18 +190,23 @@ public class UserInterface {
     }
 
     private JPanel getGraphicPanel(int width, int height, double changeX) {
-        Function proxy = arg -> Double.compare(arg, changeX) == 0 ?
-                baseFunction.getValue(arg) * Main.CHANGE : baseFunction.getValue(arg);
-        NewtonPolynomial newtonPolynomial = new NewtonPolynomial(proxy);
+        NewtonPolynomial newtonPolynomial = new NewtonPolynomial();
+
         Arrays.sort(xData);
-        Function interpolateFunction = newtonPolynomial.interpolate(xData);
+        double[] yData = Arrays.stream(xData).
+                map(x -> Double.compare(x, changeX) == 0 ? baseFunction.getValue(x) * Main.CHANGE :
+                        baseFunction.getValue(x)).toArray();
+
+        Function interpolateFunction = newtonPolynomial.interpolate(xData, yData);
         this.interpolateFunction = interpolateFunction;
+
         JPanel graphicPanel = new Graphing(baseFunction, interpolateFunction, xData).
-                getChart(width, height, changeX, proxy.getValue(changeX));
+                getChart(width, height, changeX, baseFunction.getValue(changeX) * Main.CHANGE);
         graphicPanel.setLocation(0, 0);
         graphicPanel.setSize(width, height);
         return graphicPanel;
     }
+
 
     public void draw(int width, int height) {
         SwingUtilities.invokeLater(() -> {
