@@ -1,7 +1,6 @@
 package lab4;
 
 import lab2.Function;
-import lab3.NewtonPolynomial;
 
 import java.util.Arrays;
 
@@ -12,7 +11,7 @@ public class DifferentialEquation {
         this.function = function;
     }
 
-    private void rungeKutta(double[] xData, double[] yData, double h){
+    private void setInitialData(double[] xData, double[] yData, double h){
 
         for(int i = 1; i < 4; i++){
             double x = xData[i - 1];
@@ -35,6 +34,8 @@ public class DifferentialEquation {
         double segmentLength = endPoint - x0;
         do {
             intervals *= 2;
+            if(intervals > 100_000)
+                throw new SolutionException("Достигнут максимум разбиений");
             double h = segmentLength / intervals;
 
             xData = new double[intervals + 1];
@@ -44,7 +45,7 @@ public class DifferentialEquation {
 
             for(int i = 1; i < xData.length; i++)
                 xData[i] = xData[i - 1] + h;
-            rungeKutta(xData, yData, h);
+            setInitialData(xData, yData, h);
 
             double[] error = new double[yData.length - 4];
             for(int i = 4; i < yData.length; i++){
@@ -52,10 +53,13 @@ public class DifferentialEquation {
                         - function.getValue(xData[i - 2], yData[i - 2])
                         + 2 * function.getValue(xData[i - 1], yData[i - 1]));
 
-
                 yData[i] = yData[i - 2] + h / 3 * (function.getValue(xData[i - 2], yData[i - 2])
                         + 4 * function.getValue(xData[i - 1], yData[i - 1])
                         + function.getValue(xData[i], prediction));
+                if(!Double.isFinite(yData[i]))
+                    throw new SolutionException(String.format("При аргументе, лежащем внутри отрезка от %f до %f, " +
+                            "значения функции выходят за пределы допустимых значений",
+                            Math.min(x0, endPoint), Math.max(x0, endPoint)));
                 error[i - 4] = Math.abs(yData[i] - prediction) / 29;
             }
             averageError = Arrays.stream(error).average().orElse(0);

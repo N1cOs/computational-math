@@ -1,5 +1,7 @@
 package lab4;
 
+import lab2.Function;
+import lab3.NewtonPolynomial;
 import lombok.AllArgsConstructor;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
@@ -17,17 +19,36 @@ public class Graphing {
 
     public JPanel getChart(int width, int height){
         XYChart chart = new XYChart(width, height);
-        chart.getStyler().setXAxisMin(xData[0]);
-        chart.getStyler().setXAxisMax(xData[xData.length - 1]);
 
-        XYSeries nodes = chart.addSeries("Узлы", xData, yData);
+        XYSeries nodes = chart.addSeries("Решение ", xData, yData);
+        nodes.setShowInLegend(false);
         nodes.setMarkerColor(Color.RED);
-        nodes.setLineColor(Color.BLUE);
+        nodes.setLineColor(Color.WHITE);
         nodes.setMarker(SeriesMarkers.CIRCLE);
 
+
+        if (xData.length <= 11) {
+            NewtonPolynomial newtonPolynomial = new NewtonPolynomial();
+            Function interpolateFunction = newtonPolynomial.interpolate(xData, yData);
+            double[] xGraphing = new double[width];
+            double[] yGraphing = new double[width];
+            double step = Math.abs(xData[xData.length - 1] - xData[0]) / width;
+            double startX = Math.min(xData[0], xData[xData.length - 1]);
+            for(int i = 0; i < xGraphing.length; i++){
+                xGraphing[i] = startX + step * i;
+                yGraphing[i] = interpolateFunction.getValue(xGraphing[i]);
+            }
+            XYSeries solution = chart.addSeries("Решение", xGraphing, yGraphing);
+            solution.setMarker(SeriesMarkers.NONE);
+            solution.setLineColor(Color.BLUE);
+        }
+        else{
+            nodes.setLineColor(Color.BLUE);
+            nodes.setMarker(SeriesMarkers.NONE);
+            nodes.setShowInLegend(true);
+        }
+
         return new XChartPanel<>(chart);
-
-
 
     }
 }

@@ -24,7 +24,19 @@ public class UserInterface {
                 return "dy/dx = 2 * (x ^ 2 + y)";
             }
         };
+        Function function2 = new FunctionAdapter() {
+            @Override
+            public double getValue(double x, double y) {
+                return 0.5 * Math.sin(x) - y * y + 2;
+            }
+
+            @Override
+            public String toString() {
+                return "0.5 * Math.sin(x) - y * y + 2";
+            }
+        };
         equations.add(function1);
+        equations.add(function2);
     }
 
     public void draw(int width, int height){
@@ -101,7 +113,7 @@ public class UserInterface {
         endField.setColumns(5);
         accuracyPanel.add(endField);
 
-        JLabel accuracyLabel = new JLabel("Введите погрешность:");
+        JLabel accuracyLabel = new JLabel("Введите точность:");
         accuracyPanel.add(accuracyLabel);
 
         JTextField accuracyField = new JTextField();
@@ -150,6 +162,12 @@ public class UserInterface {
                     throw e;
                 }
 
+                if(Double.compare(x0, endPoint) == 0){
+                    JOptionPane.showMessageDialog(mainFrame, "Конец отрезка не может совпадать с его началом",
+                            errorTitle, JOptionPane.ERROR_MESSAGE);
+                    throw new RuntimeException();
+                }
+
                 double[][] solution = equation.solve(x0, y0, endPoint, accuracy);
                 Graphing graphing = new Graphing(solution[0], solution[1]);
 
@@ -160,8 +178,13 @@ public class UserInterface {
                 mainPanel.add(chartPanel.get());
                 mainPanel.revalidate();
                 mainPanel.repaint();
-            } catch (Exception e) {
-
+            }
+            catch (SolutionException e){
+                JOptionPane.showMessageDialog(mainFrame, e.getMessage(),
+                        errorTitle, JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         });
         buttonPanel.add(solveButton);
