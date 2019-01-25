@@ -13,6 +13,10 @@ public class UserInterface {
     private final static List<Function> equations = new LinkedList<>();
 
     static {
+        /*
+        Xo = 0 Yo = 1
+        solution: y(x) = 1.5e^(2x) * x ^ 2 - x - 0.5
+        */
         Function function1 = new FunctionAdapter() {
             @Override
             public double getValue(double x, double y) {
@@ -21,22 +25,34 @@ public class UserInterface {
 
             @Override
             public String toString() {
-                return "dy/dx = 2 * (x ^ 2 + y)";
+                return "dy/dx = 2(x ^ 2 + y)";
             }
         };
         Function function2 = new FunctionAdapter() {
             @Override
             public double getValue(double x, double y) {
-                return 0.5 * Math.sin(x) - y * y + 2;
+                return 3 * x * x;
             }
 
             @Override
             public String toString() {
-                return "0.5 * Math.sin(x) - y * y + 2";
+                return "dy/dx = 3x ^ 2";
+            }
+        };
+        Function function3 = new FunctionAdapter() {
+            @Override
+            public double getValue(double x, double y) {
+                return (2 * y + 1) * 1 / Math.tan(x);
+            }
+
+            @Override
+            public String toString() {
+                return "dy/dx = ctg(x) * (2y + 1)";
             }
         };
         equations.add(function1);
         equations.add(function2);
+        equations.add(function3);
     }
 
     public void draw(int width, int height){
